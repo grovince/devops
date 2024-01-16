@@ -1,0 +1,13 @@
+eksctl.exe create cluster --name “클러스터_이름” --region ap-northeast-2 --with-oidc --ssh-public-key “키이름” --nodes 3 --node-type t3.medium --node-volume-size=20 --managed
+예제
+
+eksctl.exe create cluster --name test --region ap-northeast-2 --with-oidc --ssh-public-key frodo --nodes 3 --node-type t3.medium --node-volume-size=20 --managed
+
+클러스터 삭제
+eksctl delete cluster --name test
+
+컨피그 파일 업데이트
+aws eks update-kubeconfig --region us-east-1 --name frodo
+
+
+

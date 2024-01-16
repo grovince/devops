@@ -1,0 +1,7 @@
+GKE 클러스터 구성하기 
+gcloud container clusters create frodo --num-nodes 3 --machine-type e2-medium
+gcloud container clusters delete frodo
+
+#스토리지 클래스 있게 만들기
+#GKE-filestore CSI add on
+gcloud container clusters create frodo --num-nodes 3 --machine-type e2-medium --addons=GcpFilestoreCsiDriver
