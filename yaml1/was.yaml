@@ -17,6 +17,7 @@ spec:
   selector:
     matchLabels:
       app: mywas
+  replicas: 3
   template:
     metadata:
       labels:
