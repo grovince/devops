@@ -41,6 +41,7 @@ jobs:
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:v${{ env.RELEASE_VERSION }} ./Dockerfile
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:latest ./Dockerfile
           rm -Rf ./Dockerfile/*.war
+          
       - name: docker images check
         run: docker images
         
@@ -50,21 +51,37 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Get EKS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2
+      - name: docker push
+        run: | 
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:v${{ env.RELEASE_VERSION }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:latest
 
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-      - name: Install kubectl
+      - name: Trigger ArgoCD Sync
         run: |
-          sudo apt-get update
-          sudo apt-get install -y kubectl
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.TOKEN }}" \
+            -H "Content-Type: application/json" \
+            https://argocd.solju.kr/api/v1/applications/rapa-devops/sync
 
-      - name: Configure kubectl
-        run: aws eks --region ap-northeast-2 update-kubeconfig --name test
 
-      - name: Update Kubernetes Deployment
-        run: kubectl set image deployment/mywas mywas=${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:latest
+      # - name: Get EKS Credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: ap-northeast-2
+
+
+      # - name: Install kubectl
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y kubectl
+
+      # - name: Configure kubectl
+      #   run: aws eks --region ap-northeast-2 update-kubeconfig --name test
+
+      # - name: Update Kubernetes Deployment
+      #   run: kubectl set image deployment/mywas mywas=${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:latest
