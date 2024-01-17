@@ -59,13 +59,13 @@ jobs:
       - name: Update Kubernetes resources
         run: |
           cd yaml/was
-          kustomize edit set image cicd-image=${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:latest
+          kustomize edit set image cicd-image=${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:v${{ env.RELEASE_VERSION }}
           cat kustomization.yml
               
       - name: Commit & Push Image 
         uses: actions-js/push@master
         with:
-          message: '[was] Update Image : ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:latest'
+          message: '[was] Update Image : ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:v${{ env.RELEASE_VERSION }}'
           # rapa-cicdlab:v${{ env.RELEASE_VERSION }}
           branch: main
           github_token: ${{ secrets.TOKEN }}
