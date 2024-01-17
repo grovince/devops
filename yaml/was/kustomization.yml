@@ -6,6 +6,6 @@ resources:
 - was.yaml
 images:
 - name: cicd-image
-  newName: grovince/rapa-cicdlab
-  newTag: latest
+  newName: grovince/rapa-cicdlab3
+  newTag: v16
 namespace: default
