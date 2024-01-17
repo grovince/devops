@@ -41,8 +41,8 @@ jobs:
       - name: docker build
         run: |
           mv ./build/libs/*.war ./Dockerfile
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:v${{ env.RELEASE_VERSION }} ./Dockerfile
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:latest ./Dockerfile
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:v${{ env.RELEASE_VERSION }} ./Dockerfile
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:latest ./Dockerfile
           rm -Rf ./Dockerfile/*.war
           rm -Rf ./build  
 
@@ -57,8 +57,8 @@ jobs:
         
       - name: docer push
         run: | 
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:v${{ env.RELEASE_VERSION }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:v${{ env.RELEASE_VERSION }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:latest
 
       # - name: Get EKS Credentials
       #   uses: aws-actions/configure-aws-credentials@v1
@@ -77,12 +77,12 @@ jobs:
       - name: Update Kubernetes resources
         run: |
           cd yaml/was
-          kustomize edit set image cicd-image=${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:v${{ env.RELEASE_VERSION }}
+          kustomize edit set image cicd-image=${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:v${{ env.RELEASE_VERSION }}
           cat kustomization.yml
               
       - name: Commit & Push Image 
         uses: actions-js/push@master
         with:
-          message: '[was] Update Image : ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:v${{ env.RELEASE_VERSION }}'
+          message: '[was] Update Image : ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:v${{ env.RELEASE_VERSION }}'
           branch: main
           github_token: ${{ secrets.TOKEN }}
