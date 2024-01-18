@@ -126,7 +126,7 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
-          REPOSITORY: rapa-cicdlab
+          REPOSITORY: rapa-devops
         run: |
           mv ./build/libs/*.war ./Dockerfile
           docker build -t $REGISTRY/$REPOSITORY:v${{ env.RELEASE_VERSION }} ./Dockerfile
@@ -151,5 +151,5 @@ jobs:
           git push origin main
         env:
           REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com
-          REPOSITORY: rapa-cicdlab
+          REPOSITORY: rapa-devops
           GITHUB_TOKEN: ${{ secrets.TOKEN }} # 푸시할 때 사용자 정의 토큰을 환경변수로 설정합니다.
