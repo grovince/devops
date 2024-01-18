@@ -32,16 +32,16 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: docker build
-        run: |
-          mv ./build/libs/*.war ./Dockerfile
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:v${{ env.RELEASE_VERSION }} ./Dockerfile
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:latest ./Dockerfile
-          rm -Rf ./Dockerfile/*.war
-          rm -Rf ./build
+      # - name: docker build
+      #   run: |
+      #     mv ./build/libs/*.war ./Dockerfile
+      #     docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:v${{ env.RELEASE_VERSION }} ./Dockerfile
+      #     docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab:latest ./Dockerfile
+      #     rm -Rf ./Dockerfile/*.war
+      #     rm -Rf ./build
 
-      - name: docker images check
-        run: docker images
+      # - name: docker images check
+      #   run: docker images
 
       - name: Checkout repo
         uses: actions/checkout@v3
