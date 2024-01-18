@@ -131,8 +131,9 @@ jobs:
           echo "REGISTRY: $REGISTRY"
           echo "REPOSITORY: $REPOSITORY"
           echo "IMAGE_TAG: $IMAGE_TAG"
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f yaml/was/Dockerfile .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
 
       - name: Install Kustomize
         run: |
