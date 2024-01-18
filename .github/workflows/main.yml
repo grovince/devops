@@ -79,7 +79,7 @@ jobs:
 
 
 
-			- name: Update Kubernetes resources
+      - name: Update Kubernetes resources
         run: |
           cd yaml/was
           kustomize edit set image cicd-image=${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:v${{ env.RELEASE_VERSION }}
