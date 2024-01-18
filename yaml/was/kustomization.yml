@@ -7,5 +7,5 @@ resources:
 images:
 - name: cicd-image
   newName: grovince/rapa-cicdlab3
-  newTag: v16
+  newTag: v57
 namespace: default
