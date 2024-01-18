@@ -59,15 +59,18 @@ jobs:
         with:
           registry-type: public
 
-      - name: Build, tag, and push docker image to Amazon ECR Public
+      - name: Build, tag, and push docker image to Amazon ECR
         env:
-          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
-          REGISTRY_ALIAS: ${{ secrets.ECR_PUBLIC_REGISTRY_ALIAS }}
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: rapa-devops
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+
+
+
 
       - name: Update Kubernetes resources
         run: |
