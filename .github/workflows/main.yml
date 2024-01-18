@@ -49,6 +49,10 @@ jobs:
           registry-type: public
           aws-region: us-east-1
 
+      - name: current location
+        run: |
+          echo "$pwd"
+
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           REGISTRY: public.ecr.aws/p7g3y4o1/rapa-devops
