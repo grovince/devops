@@ -80,8 +80,6 @@ jobs:
 
 
 
-
-
       - name: Update Kubernetes resources
         run: |
           cd yaml/was
