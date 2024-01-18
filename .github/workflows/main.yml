@@ -48,7 +48,11 @@ jobs:
 
       - name: docker images check
         run: docker images
-      
+
+
+
+
+
       - name: Checkout repo
         uses: actions/checkout@v3
 
@@ -57,7 +61,6 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::178020491921:role/my-github-actions-role
           aws-region: ap-northeast-2
-
 
       - name: Login to Amazon ECR Public
         id: login-ecr-public
