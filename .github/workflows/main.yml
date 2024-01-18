@@ -45,20 +45,17 @@ jobs:
       - name: docker images check
         run: docker images
 
-
-
-
-
       - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4 # More information on this action can be found below in the 'AWS Credentials' section
-        with:
-          role-to-assume: arn:aws:iam::178020491921:role/my-github-actions-role
-          aws-region: ap-northeast-2
-
-      - name: Login to Amazon ECR Public
+        uses: aws-actions/configure-aws-credentials@v1
+	        with:
+	          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+						aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ap-northeast-2
+            
+			- name: Login to Amazon ECR Public
         id: login-ecr-public
         uses: aws-actions/amazon-ecr-login@v2
         with:
@@ -74,11 +71,7 @@ jobs:
           docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
 
-
-
-
-
-      - name: Update Kubernetes resources
+			- name: Update Kubernetes resources
         run: |
           cd yaml/was
           kustomize edit set image cicd-image=${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:v${{ env.RELEASE_VERSION }}
