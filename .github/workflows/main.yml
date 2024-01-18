@@ -1,3 +1,82 @@
+# name: CICD
+
+# on:
+#   push:
+#     branches: [main]
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - uses: actions/checkout@v3
+#       - run: ls -al
+
+#       - name: Set env
+#         run: echo "RELEASE_VERSION=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+
+#       - name: install jdk
+#         uses: actions/setup-java@v3
+#         with:
+#           distribution: 'temurin'
+#           java-version: '11'
+#           cache: 'gradle'
+
+#       - name: chmod gradle
+#         run: chmod +x ./gradlew
+
+#       - name: build
+#         run: ./gradlew build --no-daemon
+
+#       - name: Set up Docker Buildx
+#         id: buildx
+#         uses: docker/setup-buildx-action@v1
+
+#       - name: Checkout repo
+#         uses: actions/checkout@v3
+
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: us-east-1
+
+#       - name: Login to Amazon ECR Public
+#         id: login-ecr-public
+#         uses: aws-actions/amazon-ecr-login@v2
+#         with:
+#           registry-type: public
+#           aws-region: us-east-1
+
+#       - name: Build, tag, and push docker image to Amazon ECR
+#         env:
+#           REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
+#           REPOSITORY: rapa-devops
+#           IMAGE_TAG: ${{ github.sha }}
+#         run: |
+#           echo "REGISTRY: $REGISTRY"
+#           echo "REPOSITORY: $REPOSITORY"
+#           echo "IMAGE_TAG: $IMAGE_TAG"
+#           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+#           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+
+
+#       - name: Update Kubernetes resources
+#         run: |
+#           cd yaml/was
+#           kustomize edit set image cicd-image=${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:v${{ env.RELEASE_VERSION }}
+#           cat kustomization.yml
+
+#       - name: Commit & Push Image
+#         uses: actions-js/push@master
+#         with:
+#           message: '[was] Update Image: ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:v${{ env.RELEASE_VERSION }}'
+#           branch: main
+#           github_token: ${{ secrets.TOKEN }}
+
+
 name: CICD
 
 on:
@@ -6,34 +85,28 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v3
       - run: ls -al
 
       - name: Set env
-        run: echo "RELEASE_VERSION=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+        run: echo "RELEASE_VERSION=${{ github.run_number }}" >> $GITHUB_ENV
 
-      - name: install jdk
+      - name: Install JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '11'
           cache: 'gradle'
 
-      - name: chmod gradle
-        run: chmod +x ./gradlew
-
-      - name: build
+      - name: Build
         run: ./gradlew build --no-daemon
 
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
-
-      - name: Checkout repo
-        uses: actions/checkout@v3
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -49,7 +122,7 @@ jobs:
           registry-type: public
           aws-region: us-east-1
 
-      - name: Build, tag, and push docker image to Amazon ECR
+      - name: Build, tag, and push Docker image to Amazon ECR
         env:
           REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
           REPOSITORY: rapa-devops
@@ -61,17 +134,20 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
-
+      - name: Install Kustomize
+        run: |
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
 
       - name: Update Kubernetes resources
         run: |
           cd yaml/was
-          kustomize edit set image cicd-image=${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:v${{ env.RELEASE_VERSION }}
+          ../kustomize edit set image cicd-image=${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:v${{ env.RELEASE_VERSION }}
           cat kustomization.yml
 
       - name: Commit & Push Image
-        uses: actions-js/push@master
+        uses: ad-m/github-push-action@master
         with:
-          message: '[was] Update Image: ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:v${{ env.RELEASE_VERSION }}'
           branch: main
-          github_token: ${{ secrets.TOKEN }}
+          directory: yaml/was
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_message: '[was] Update Image: ${{ secrets.DOCKERHUB_USERNAME }}/rapa-cicdlab3:v${{ env.RELEASE_VERSION }}'
