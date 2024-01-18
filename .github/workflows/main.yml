@@ -120,7 +120,6 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
         with:
           registry-type: public
-          aws-region: us-east-1
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
