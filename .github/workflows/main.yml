@@ -138,7 +138,7 @@ jobs:
           echo "REGISTRY: $REGISTRY"
           echo "REPOSITORY: $REPOSITORY"
           echo "IMAGE_TAG: $IMAGE_TAG"
-          cd rapa-devops/Dockerfile
+          cd Dockerfile
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
