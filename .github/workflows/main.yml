@@ -135,12 +135,11 @@ jobs:
           REPOSITORY: rapa-devops
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          echo "REGISTRY: $REGISTRY"
-          echo "REPOSITORY: $REPOSITORY"
-          echo "IMAGE_TAG: $IMAGE_TAG"
-          cd Dockerfile
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          mv ./build/libs/*.war ./Dockerfile
+          docker build -t $REGISTRY/$REPOSITORY:v${{ env.RELEASE_VERSION }} ./Dockerfile
+          docker push $REGISTRY/$REPOSITORY:v${{ env.RELEASE_VERSION }}
+          rm -Rf ./Dockerfile/*.war
+
 
       - name: Update Kubernetes resources
         run: |
