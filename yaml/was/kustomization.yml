@@ -6,6 +6,11 @@ resources:
 - was.yaml
 images:
 - name: cicd-image
+<<<<<<< HEAD
   newName: public.ecr.aws/p7g3y4o1/rapa-devops
   newTag: v58
+=======
+  newName: grovince/rapa-cicdlab3
+  newTag: v59
+>>>>>>> 9130a04e1923eba608d1a87bdc3c931c97989559
 namespace: default
