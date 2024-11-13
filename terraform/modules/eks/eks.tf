@@ -25,6 +25,27 @@ module "eks"{
     vpc_id          = module.network.vpc_id
     subnet_ids      = module.network.public_subnet_ids
 
+
+    cluster_addons = {
+      kube-proxy = {
+      most_recent = true
+      }
+      vpc-cni = {
+        most_recent              = true
+        before_compute           = true
+        service_account_role_arn = module.vpc_cni_irsa.iam_role_arn
+        configuration_values = jsonencode({
+          env = {
+            # Reference docs https://docs.aws.amazon.com/eks/latest/userguide/cni-increase-ip-addresses.html
+            ENABLE_PREFIX_DELEGATION = "true"
+            WARM_PREFIX_TARGET       = "1"
+          }
+        })
+    }
+    }
+
+
+
     eks_managed_node_group_defaults = {
         instance_types = ["t2.medium"]
     }
