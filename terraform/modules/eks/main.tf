@@ -30,13 +30,15 @@ module "eks"{
     }
 
     eks_managed_node_groups = {
-        one = {
-            name 
-            ami_type       = "AL2_x86_64"
+        node_group = {
+            name           = "node-group-1"
+
             instance_types = ["t2.medium"]
 
             min_size     = 2
             max_size     = 4
             desired_size = 2
+        } 
     }
+    tags = local.tags
 }
