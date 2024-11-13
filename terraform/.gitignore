@@ -1,1 +1,2 @@
 modules/network/variables.tf
+modules/eks/variables.tf
