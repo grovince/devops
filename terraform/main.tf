@@ -1,3 +1,20 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = var.region
+}
+
 module "network" {
-  source = "./modules/network"
+  source              = "./modules/network"
+}
+
+module "eks" {
+  source            = "./modules/eks"
 }
