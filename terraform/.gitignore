@@ -1,4 +1,8 @@
 modules/network/variables.tf
+<<<<<<< HEAD
 modules/eks/variables.tf
 .terraform.lock.hcl
 .terraform
+=======
+modules/eks/variables.tf
+>>>>>>> 33f1e1ab8e577a656c255126f49cc095b9faf3ff
