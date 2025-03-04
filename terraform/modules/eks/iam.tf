@@ -46,15 +46,4 @@ resource "aws_iam_role_policy_attachment" "eks_cni_policy" {
 resource "aws_iam_role_policy_attachment" "ecr_read_only" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
   role       = aws_iam_role.eks_node_role.name
-<<<<<<< HEAD
-}
-
-output "eks_cluster_role_arn" {
-  value = aws_iam_role.eks_cluster_role.arn
-}
-
-output "eks_node_role_arn" {
-  value = aws_iam_role.eks_node_role.arn
-=======
->>>>>>> 33f1e1ab8e577a656c255126f49cc095b9faf3ff
 }

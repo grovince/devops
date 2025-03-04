@@ -1,20 +1,17 @@
 output "vpc_id" {
   description = "The ID of the VPC"
-<<<<<<< HEAD
   value       = aws_vpc.vpc.id
 }
 
 output "vpc_cidr" {
   description = "The CIDR block of the VPC"
   value       = aws_vpc.vpc.cidr_block
-=======
   value = aws_vpc.this.id
 }
 
 output "igw_id" {
   description = "The ID of the Internet Gateway"
   value       = aws_internet_gateway.igw.id
->>>>>>> 33f1e1ab8e577a656c255126f49cc095b9faf3ff
 }
 
 output "public_subnet_ids" {
