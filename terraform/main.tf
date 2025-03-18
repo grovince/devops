@@ -1,21 +1,21 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-    }
-    region = "ap-northeast-2"
-  }
+provider "aws" {
+  region = var.region
+  source = "hashicorp/aws"
+  version = "~> 5.7.0"
+}
 
-  module "network" {
-    source = "./modules/network"
+data "aws_availability_zones" "available" {
+  filter {
+    name   = "opt-in-status"
+    values = ["opt-in-not-required"]
   }
+}
 
-  module "eks" {
-    source = "./modules/eks"
-  }
+locals {
+  cluster_name = "devops-eks-${random_string.suffix.result}"
+}
 
-  module "IAM" {
-    source = "./modules/IAM"
-  >>>>>>> 33f1e1ab8e577a656c255126f49cc095b9faf3ff
-  }
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
 }
