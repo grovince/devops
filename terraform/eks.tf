@@ -2,34 +2,34 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.33.1"
 
-  cluster_name    = local.cluster_name
-  cluster_version = "1.27"
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
 
-  vpc_id                         = module.vpc.vpc_id
-  subnet_ids                     = module.vpc.private_subnets
+  vpc_id                         = aws_vpc.vpc.id
+  subnet_ids                     = aws_subnet.private.*.id
   
   cluster_endpoint_private_access = false
   cluster_endpoint_public_access = true
 
   eks_managed_node_groups = {
     one = {
-      name = "node-group-1"
+      name = var.node_group_one_name
 
-      instance_types = ["t3.micro"]
+      instance_types = [var.instance_type]
 
-      min_size     = 1
-      max_size     = 2
-      desired_size = 1
+      min_size     = var.min_size
+      max_size     = var.max_size
+      desired_size = var.desired_size
     }
 
     two = {
-      name = "node-group-2"
+      name = var.node_group_two_name
 
-      instance_types = ["t3.micro"]
+      instance_types = [var.instance_type]
 
-      min_size     = 1
-      max_size     = 2
-      desired_size = 1
+      min_size     = var.min_size
+      max_size     = var.max_size
+      desired_size = var.desired_size
     }
   }
 }

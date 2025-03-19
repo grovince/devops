@@ -1,7 +1,7 @@
 ### 퍼블릭 서브넷 라우팅 테이블 
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.vpc.id
-  tags   = { Name = "${local.vpc_name}-public" }
+  tags   = { Name = "${var.vpc_name}-public" }
 }
 
 ### 퍼블릭 서브넷에서 인터넷에 트래픽 요청 시 앞서 정의한 IGW로 보냄
@@ -13,7 +13,7 @@ resource "aws_route" "public_worldwide" {
 
 ### 퍼블릭 서브넷에 라우팅 테이블 연결
 resource "aws_route_table_association" "public" {
-  count = length(local.public_subnets)
+  count = length(var.public_subnets)
 
   subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
@@ -22,12 +22,12 @@ resource "aws_route_table_association" "public" {
 ### 프라이빗 서브넷 라우팅 테이블
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.vpc.id
-  tags   = { Name = "${local.vpc_name}-private" }
+  tags   = { Name = "${var.vpc_name}-private" }
 }
 
 ### 프라이빗 서브넷에 라우팅 테이블 연결 
 resource "aws_route_table_association" "private" {
-  count = length(local.private_subnets)
+  count = length(var.private_subnets)
 
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private.id
