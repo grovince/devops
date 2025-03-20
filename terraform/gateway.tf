@@ -6,7 +6,7 @@ resource "aws_internet_gateway" "igw" {
 
 ### NAT GW의 고정 IP
 resource "aws_eip" "nat_gateway_ip" {
-  vpc  = true
+  domain = "vpc"
   tags = { Name = "${var.vpc_name}-natgw" }
 }
 
