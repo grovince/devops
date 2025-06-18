@@ -1,0 +1,4 @@
+dev/src/main/resources/application.properties
+dev/bin/main/application.properties
+.gradle
+../.gradle
