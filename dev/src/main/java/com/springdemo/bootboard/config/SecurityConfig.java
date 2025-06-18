@@ -6,13 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
+import org.springframework.security.web.SecurityFilterChain;
+import org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect;
 
 import com.springdemo.bootboard.security.SpringBoardNoOpPasswordEncoder;
 import com.springdemo.bootboard.security.SpringBoardUserDetailsService;
@@ -22,60 +23,59 @@ import lombok.Data;
 @Configuration
 @EnableWebSecurity
 @Data
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
-	@Autowired
-	@Qualifier("dataSource")
-	private DataSource dataSource;
-	
-	@Autowired
-	@Qualifier("userDetailService")
-	private SpringBoardUserDetailsService userDetailService;
-	
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		super.configure(web);
-	}
-	
-	// thymeleaf 에서 security 태그를 사용하기 위해 필요한 bean 설정
-	@Bean
-	public SpringSecurityDialect springSecurityDialect(){
-	    return new SpringSecurityDialect();
-	}
+    @Autowired
+    @Qualifier("dataSource")
+    private DataSource dataSource;
 
-	
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new SpringBoardNoOpPasswordEncoder();
-	}
-	
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http	.authorizeRequests()
-//				.antMatchers("/").permitAll()
-//				.antMatchers("/home").permitAll()
-//				.antMatchers("/account/**").permitAll()
-//				.antMatchers("/css/**").permitAll()
-//				.antMatchers("/webjars/**").permitAll()
-				.antMatchers("/board/**").authenticated()
-				.antMatchers("/mail/**").authenticated()
-				.anyRequest().permitAll()
-			.and()
-				.formLogin().loginPage("/account/login").defaultSuccessUrl("/home")
-			.and()
-				.logout().logoutSuccessUrl("/home")
-			.and()
-				.csrf().disable();
-	}
-	
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		
-		auth.userDetailsService(userDetailService);		
-		auth.jdbcAuthentication()
-			.dataSource(dataSource)
-			.usersByUsernameQuery("SELECT * FROM tbl_users WHERE user_name = ?")
-			.authoritiesByUsernameQuery("SELECT user_name, role_name FROM tbl_users_roles WHERE user_name = ?")
-			.passwordEncoder(passwordEncoder());
-	}
+    @Autowired
+    @Qualifier("userDetailService")
+    private SpringBoardUserDetailsService userDetailService;
+
+    // thymeleaf에서 security 태그를 사용하기 위한 bean
+    @Bean
+    public SpringSecurityDialect springSecurityDialect() {
+        return new SpringSecurityDialect();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new SpringBoardNoOpPasswordEncoder();
+    }
+
+    // Spring Security 6.x 방식의 SecurityFilterChain 등록
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/board/**", "/mail/**").authenticated()
+                .anyRequest().permitAll()
+            )
+            .formLogin(form -> form
+                .loginPage("/account/login")
+                .defaultSuccessUrl("/home")
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutSuccessUrl("/home")
+            )
+            .csrf(csrf -> csrf.disable());
+        return http.build();
+    }
+
+    // DaoAuthenticationProvider를 직접 등록 (userDetailService, passwordEncoder 사용)
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    // AuthenticationManager Bean 등록 (필요시)
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
 }
