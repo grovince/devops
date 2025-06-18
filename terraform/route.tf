@@ -13,7 +13,7 @@ resource "aws_route" "public_worldwide" {
 
 ### 퍼블릭 서브넷에 라우팅 테이블 연결
 resource "aws_route_table_association" "public" {
-  count = length(var.public_subnets)
+  count = length(var.subnet_configs.public_subnets)
 
   subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
@@ -27,7 +27,7 @@ resource "aws_route_table" "private" {
 
 ### 프라이빗 서브넷에 라우팅 테이블 연결 
 resource "aws_route_table_association" "private" {
-  count = length(var.private_subnets)
+  count = length(var.subnet_configs.private_subnets)
 
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private.id

@@ -2,7 +2,7 @@
 resource "aws_eks_cluster" "devops" {
   name     = var.cluster_name
   role_arn = aws_iam_role.devops.arn
-  version  = var.cluster_version
+  version  = var.eks_version
 
   vpc_config {
     security_group_ids = [aws_security_group.eks.id]
@@ -21,12 +21,12 @@ resource "aws_eks_node_group" "one" {
   node_role_arn   = aws_iam_role.nodes.arn
 
   scaling_config {
-    desired_size = var.desired_size
-    max_size     = var.max_size
-    min_size     = var.min_size
+    desired_size = var.node_group_config.desired_size
+    max_size     = var.node_group_config.max_size
+    min_size     = var.node_group_config.min_size
   }
 
-  instance_types = [var.instance_type]
+  instance_types = var.node_group_config.instance_types
 
   subnet_ids     = aws_subnet.private.*.id
 
@@ -44,12 +44,12 @@ resource "aws_eks_node_group" "two" {
   node_role_arn   = aws_iam_role.nodes.arn
 
   scaling_config {
-    desired_size = var.desired_size
-    max_size     = var.max_size
-    min_size     = var.min_size
+    desired_size = var.node_group_config.desired_size
+    max_size     = var.node_group_config.max_size
+    min_size     = var.node_group_config.min_size
   }
 
-  instance_types = [var.instance_type]
+  instance_types = var.node_group_config.instance_types
 
   subnet_ids     = aws_subnet.private.*.id
 
