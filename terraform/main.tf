@@ -2,20 +2,13 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
+      version = "~> 5.83.0"
     }
-    region = "ap-northeast-2"
   }
 
-  module "network" {
-    source = "./modules/network"
-  }
+  required_version = ">= 1.5.0"
+}
 
-  module "eks" {
-    source = "./modules/eks"
-  }
-
-  module "IAM" {
-    source = "./modules/IAM"
-  >>>>>>> 33f1e1ab8e577a656c255126f49cc095b9faf3ff
-  }
+provider "aws" {
+  region  = var.region
 }
