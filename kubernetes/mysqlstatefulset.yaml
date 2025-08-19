@@ -67,7 +67,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
         - name: mysql
-          image: grovince/rapa_db:v1
+          image: grovince/devops:db-v2
           args:
             - "--ignore-db-dir=lost+found"
           ports:
@@ -98,23 +98,23 @@ spec:
                   name: mysql-secret
                   key: userpass          
           volumeMounts:
-            - name: data
-              mountPath: /var/lib/mysql
+            # - name: data  #aws 스토리지클래스 사용할 경우 주석 제거
+            #   mountPath: /var/lib/mysql
             - name: conf
               mountPath: /etc/mysql/conf.d
       volumes:
         - name: conf
           configMap:
             name: mysql-cnf
-  volumeClaimTemplates: 
-    - metadata:
-        name: data
-      spec:
-        # storageClassName: standard 
-        # => default로 동작함 (standard-rwo (default)으로 실행됨)
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: aws-sc-ebs #
-        resources:
-          requests:
-            storage: 1Gi
+  # volumeClaimTemplates: 
+  #   - metadata:
+  #       name: data
+  #     spec:
+  #       # storageClassName: standard 
+  #       # => default로 동작함 (standard-rwo (default)으로 실행됨)
+  #       accessModes:
+  #         - ReadWriteOnce
+  #       # storageClassName: aws-sc-ebs
+  #       resources:
+  #         requests:
+  #           storage: 1Gi
